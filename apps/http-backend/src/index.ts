@@ -6,7 +6,7 @@ const app = express();
 
 app.use('/auth/api/v1', authRoutes);
 app.use('/', ()=>{
-    console.log("Inside ws-backend");
+    console.log("Inside http-backend");
 })
 
 app.listen(4000, ()=>{
