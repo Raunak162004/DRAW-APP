@@ -13,4 +13,5 @@ export const SigninSchema = z.object({
 
 export const CreateRoomSchema = z.object({
     name: z.string().min(5).max(20),
+    adminId: z.string()
 })

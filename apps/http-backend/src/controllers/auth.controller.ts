@@ -3,7 +3,7 @@ import {CreateUserSchema, SigninSchema, CreateRoomSchema} from "@repo/common/con
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import { JWT_SECRET } from '@repo/backend-common/config';
+import { JWT_SECRET } from '@repo/backend-common/config'; 
 
 export const login = async (req: Request, res: Response) => {
   const parsed = SigninSchema.safeParse(req.body);
@@ -21,7 +21,12 @@ export const login = async (req: Request, res: Response) => {
 
   const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
 
-
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "strict",
+    maxAge: 3600000, // 1 hour
+  });
 
   return res.json({ message: "Login successful", token });
 };
@@ -55,8 +60,17 @@ export const signup = async (req: Request, res: Response) => {
 
 
 
-export const room = ()=>{
-  console.log("Login");
+export const createRoom = async (req: Request, res: Response) => {
+  const parsed = CreateRoomSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Invalid input" });
+  }
 
-  return;
-}
+  const { name } = parsed.data;
+
+  const newRoom = await prisma.room.create({
+    data: { slug: name, adminId: parsed.data.adminId },
+  });
+
+  return res.json({ message: "Room created successfully", newRoom });
+};

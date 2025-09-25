@@ -1,10 +1,11 @@
 import express from 'express';
-import {CreateUserSchema, SigninSchema, CreateRoomSchema} from "@repo/common/config"
 import authRoutes from './routes/auth.routes';
 
 
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/auth/api/v1', authRoutes);
 app.use('/', ()=>{
