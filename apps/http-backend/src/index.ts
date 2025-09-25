@@ -3,6 +3,7 @@ import {CreateUserSchema} from "@repo/common/config"
 import authRoutes from './routes/auth.routes';
 const app = express();
 
+
 app.use('/auth/api/v1', authRoutes);
 app.use('/', ()=>{
     console.log("Inside ws-backend");
