@@ -11,9 +11,9 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Invalid input" });
   }
 
-  const { username, password } = parsed.data; // parsed will look like { success: true, data: { username, password } }
+  const { email, password } = parsed.data; // parsed will look like { success: true, data: { email, password } }
 
-  const user = await prisma.user.findUnique({ where: { username } });
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return res.status(404).json({ error: "User not found" });
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response) => {
 
   const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
 
-  
+
 
   return res.json({ message: "Login successful", token });
 };
@@ -29,11 +29,32 @@ export const login = async (req: Request, res: Response) => {
 
 
 
-export const signup = ()=>{
-  console.log("Login");
+export const signup = async (req: Request, res: Response) => {
+  const parsed = CreateUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ message: "Invalid input" });
+  }
 
-  return;
+  const { name, email, password } = parsed.data;
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email }
+  });
+  if (existingUser) {
+    return res.status(409).json({ error: "User already exists" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = await prisma.user.create({
+    data: { name, email, password: hashedPassword },
+  });
+
+  return res.json({ message: "Signup successful", newUser });
 }
+
+
+
+
 export const room = ()=>{
   console.log("Login");
 
