@@ -11,4 +11,5 @@
 // if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // export const db = prisma;
+
 export const JWT_SECRET = process.env.JWT_SECRET || "123123";
