@@ -1,6 +1,8 @@
 import express from 'express';
 import {CreateUserSchema} from "@repo/common/config"
 import authRoutes from './routes/auth.routes';
+
+
 const app = express();
 
 
